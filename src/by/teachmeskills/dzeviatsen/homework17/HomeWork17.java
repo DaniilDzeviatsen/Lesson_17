@@ -29,7 +29,7 @@ public class HomeWork17 {
                             System.out.println("Goodbye");
                             break;
                         }
-                        System.out.println("enter username");
+                        System.out.println("Enter username");
                         User user = new User(sc.nextLine());
                         System.out.println("Enter text");
                         String text = sc.nextLine();
