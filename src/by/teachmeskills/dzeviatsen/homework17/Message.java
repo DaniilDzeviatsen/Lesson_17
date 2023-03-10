@@ -9,23 +9,32 @@ public class Message {
     private User user;
     private Instant sendTime;
 
-    private static final DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("hh:mm").withZone(ZoneId.of("Europe/Minsk"));
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("hh:mm").withZone(ZoneId.of("Europe/Minsk"));
 
-    public Message(String text, User user, Instant sendTime) {
+    public Message(String text, User user) {
         this.text = text;
         this.user = user;
-        this.sendTime = Instant.now();
+        this.sendTime = getSendingTime();
     }
-    public String getText(){
+
+    public String getText() {
         return text;
     }
-    public User getUser(){
+
+    public User getUser() {
         return user;
     }
-    public Instant getSendTime(){
+
+    public Instant getSendTime() {
         return sendTime;
     }
-    public String toString(){
-        return "%s:%n%s%30s%n%n".formatted(user.getNickName(), text, dateTimeFormatter.format(sendTime));
+
+    public String toString() {
+        return "%s:%n%s%30s%n%n".formatted(user.getNickName(), text, DATE_TIME_FORMATTER.format(sendTime));
+    }
+
+    public Instant getSendingTime() {
+        return Instant.now();
     }
 }
