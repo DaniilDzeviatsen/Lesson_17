@@ -1,7 +1,6 @@
 package by.teachmeskills.dzeviatsen.homework17;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -29,11 +28,11 @@ public class HomeWork17 {
                             System.out.println("Goodbye");
                             break;
                         }
-                        System.out.println("enter username");
+                        System.out.println("Enter username");
                         User user = new User(sc.nextLine());
                         System.out.println("Enter text");
                         String text = sc.nextLine();
-                        if (telegramPro.ifAddNewMessage(text, user, Instant.now())) {
+                        if (telegramPro.ifAddNewMessage(text, user)) {
                             System.out.println("Message sent");
                         } else {
                             System.out.println("Do not spam, please");

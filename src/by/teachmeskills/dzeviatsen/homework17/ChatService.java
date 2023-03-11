@@ -7,44 +7,45 @@ import java.util.Scanner;
 
 public class ChatService {
     private int limitNumOfMessages;
-    private Duration period;
+    private Duration nonSpamPeriod;
     private Message[] history;
 
-    public ChatService(int limitNumOfMessages, Duration period) {
-        validatePeriod(period);
+    public ChatService(int limitNumOfMessages, Duration nonSpamPeriod) {
+        validatePeriod(nonSpamPeriod);
         validateLimitNumOfMessages(limitNumOfMessages);
         this.limitNumOfMessages = limitNumOfMessages;
-        this.period = period;
+        this.nonSpamPeriod = nonSpamPeriod;
         history = new Message[0];
     }
 
     public static void validateLimitNumOfMessages(int limitNumOfMessages) {
-        if (limitNumOfMessages > 10) {
+        if (limitNumOfMessages < 0) {
             throw new IllegalArgumentException("Value is out of limit");
         }
     }
 
-    public static void validatePeriod(Duration period) {
-        if (period.isNegative() || period.isZero() || period.compareTo(Duration.ofSeconds(20)) > 0) {
+    public static void validatePeriod(Duration nonSpamPeriod) {
+        if (nonSpamPeriod.compareTo(Duration.ZERO) <= 0) {
             throw new IllegalArgumentException("Period is incorrect");
         }
     }
 
-    public boolean ifAddNewMessage(String text, User user, Instant sendTime) {
+    public boolean ifAddNewMessage(String text, User user) {
         int counterOfMessages = 0;
+        Instant sendingTime = getSendingTime();
         for (int i = history.length - 1; i >= 0; i--) {
-            if (history[i].getSendTime().isAfter(Instant.now().minus(period)) &&
+            if (history[i].getSendTime().isBefore(sendingTime.minus(nonSpamPeriod))) {
+                break;
+            }
+            if (history[i].getSendTime().isAfter(sendingTime.minus(nonSpamPeriod)) &&
                     history[i].getUser().getNickName().equals(user.getNickName())) {
                 counterOfMessages++;
                 if (counterOfMessages == limitNumOfMessages) {
                     return false;
                 }
-                if (history[i].getSendTime().isBefore(Instant.now().minus(period))) {
-                    break;
-                }
             }
         }
-        addMessage(new Message(text, user, sendTime));
+        addMessage(new Message(text, user));
         return true;
     }
 
@@ -57,4 +58,7 @@ public class ChatService {
         return Arrays.copyOf(history, history.length);
     }
 
+    public Instant getSendingTime() {
+        return Instant.now();
+    }
 }
