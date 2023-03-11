@@ -3,11 +3,10 @@ package by.teachmeskills.dzeviatsen.homework17;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class ChatService {
-    private int limitNumOfMessages;
-    private Duration nonSpamPeriod;
+    private final int limitNumOfMessages;
+    private final Duration nonSpamPeriod;
     private Message[] history;
 
     public ChatService(int limitNumOfMessages, Duration nonSpamPeriod) {
@@ -19,7 +18,7 @@ public class ChatService {
     }
 
     public static void validateLimitNumOfMessages(int limitNumOfMessages) {
-        if (limitNumOfMessages < 0) {
+        if (limitNumOfMessages <= 0) {
             throw new IllegalArgumentException("Value is out of limit");
         }
     }
@@ -37,15 +36,14 @@ public class ChatService {
             if (history[i].getSendTime().isBefore(sendingTime.minus(nonSpamPeriod))) {
                 break;
             }
-            if (history[i].getSendTime().isAfter(sendingTime.minus(nonSpamPeriod)) &&
-                    history[i].getUser().getNickName().equals(user.getNickName())) {
+            if (history[i].getUser().getNickName().equals(user.getNickName())) {
                 counterOfMessages++;
                 if (counterOfMessages == limitNumOfMessages) {
                     return false;
                 }
             }
         }
-        addMessage(new Message(text, user));
+        addMessage(new Message(text, user, sendingTime));
         return true;
     }
 
