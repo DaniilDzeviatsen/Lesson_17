@@ -5,17 +5,17 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public class Message {
-    private String text;
-    private User user;
-    private Instant sendTime;
+    private final String text;
+    private final User user;
+    private final Instant sendTime;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("hh:mm").withZone(ZoneId.of("Europe/Minsk"));
 
-    public Message(String text, User user) {
+    public Message(String text, User user, Instant sendTime) {
         this.text = text;
         this.user = user;
-        this.sendTime = getSendingTime();
+        this.sendTime = sendTime;
     }
 
     public String getText() {

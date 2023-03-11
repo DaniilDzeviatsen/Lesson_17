@@ -1,7 +1,7 @@
 package by.teachmeskills.dzeviatsen.homework17;
 
 public class User {
-    private String nickName;
+    private final String nickName;
 
     public User(String nickName) {
         this.nickName = nickName;
