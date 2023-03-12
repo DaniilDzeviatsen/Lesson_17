@@ -29,7 +29,7 @@ public class ChatService {
         }
     }
 
-    public boolean ifAddNewMessage(String text, User user) {
+    public void ifAddNewMessage(String text, User user) throws UserMessagesRateLimitingExceededException {
         int counterOfMessages = 0;
         Instant sendingTime = getSendingTime();
         for (int i = history.length - 1; i >= 0; i--) {
@@ -39,12 +39,13 @@ public class ChatService {
             if (history[i].getUser().getNickName().equals(user.getNickName())) {
                 counterOfMessages++;
                 if (counterOfMessages == limitNumOfMessages) {
-                    return false;
+                    Instant firstBanTime = history[i].getSendTime();
+                    throw new UserMessagesRateLimitingExceededException(firstBanTime.plus(nonSpamPeriod));
                 }
             }
         }
         addMessage(new Message(text, user, sendingTime));
-        return true;
+
     }
 
     public void addMessage(Message newMessage) {
