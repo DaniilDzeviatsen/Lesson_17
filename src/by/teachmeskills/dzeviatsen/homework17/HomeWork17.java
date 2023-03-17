@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class HomeWork17 {
     static ChatService telegramPro;
 
-    public static void main(String[] args) throws UserMessagesRateLimitingExceededException {
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter limit num of messages");
         int limitNumOfMessages = Integer.parseInt(sc.nextLine());
@@ -32,7 +32,7 @@ public class HomeWork17 {
                         System.out.println("Доставлено");
                     } catch (UserMessagesRateLimitingExceededException e) {
                         System.out.println("Слишком частые запросы, напишите через "
-                                + Duration.between(Instant.now(), e.getNonBlockedTime()).getSeconds());
+                                + Duration.between(Instant.now(), e.getNonBlockedTime()).getSeconds() + " секунд");
                     }
 
                 }
