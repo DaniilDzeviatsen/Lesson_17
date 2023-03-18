@@ -36,7 +36,7 @@ public class ChatService {
             if (history[i].getSendTime().isBefore(sendingTime.minus(nonSpamPeriod))) {
                 break;
             }
-            if (history[i].getUser().getNickName().equals(user.getNickName())) {
+            if (history[i].getUser().equals(user)) {
                 counterOfMessages++;
                 if (counterOfMessages == limitNumOfMessages) {
                     Instant firstBanTime = history[i].getSendTime();
