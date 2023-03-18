@@ -2,7 +2,8 @@ package by.teachmeskills.dzeviatsen.homework17;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class HomeWork17 {
@@ -37,7 +38,15 @@ public class HomeWork17 {
 
                 }
                 case "history" -> {
-                    System.out.println(Arrays.toString(telegramPro.getAll()));
+                    System.out.println(telegramPro.getAll());
+
+                }
+                case "history2" -> {
+                    List<Message> history = telegramPro.getAll();
+                    ListIterator<Message> listIterator = history.listIterator(history.size());
+                    while (listIterator.hasPrevious()) {
+                        System.out.println(listIterator.previous().toString());
+                    }
                 }
                 case "exit" -> {
                     return;
