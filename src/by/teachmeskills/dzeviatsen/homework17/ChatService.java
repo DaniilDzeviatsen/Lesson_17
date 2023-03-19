@@ -2,19 +2,19 @@ package by.teachmeskills.dzeviatsen.homework17;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.*;
 
 public class ChatService {
     private final int limitNumOfMessages;
     private final Duration nonSpamPeriod;
-    private Message[] history;
+    private List<Message> history;
 
     public ChatService(int limitNumOfMessages, Duration nonSpamPeriod) {
         validatePeriod(nonSpamPeriod);
         validateLimitNumOfMessages(limitNumOfMessages);
         this.limitNumOfMessages = limitNumOfMessages;
         this.nonSpamPeriod = nonSpamPeriod;
-        history = new Message[0];
+        history = new LinkedList<>();
     }
 
     public static void validateLimitNumOfMessages(int limitNumOfMessages) {
@@ -29,34 +29,34 @@ public class ChatService {
         }
     }
 
-    public boolean ifAddNewMessage(String text, User user) {
+    public void ifAddNewMessage(String text, User user) throws UserMessagesRateLimitingExceededException {
         int counterOfMessages = 0;
         Instant sendingTime = getSendingTime();
-        for (int i = history.length - 1; i >= 0; i--) {
-            if (history[i].getSendTime().isBefore(sendingTime.minus(nonSpamPeriod))) {
+        ListIterator <Message>listIterator= history.listIterator(history.size());
+        while (listIterator.hasPrevious()){
+            Message message = listIterator.previous();
+            if(message.getSendTime().isBefore(sendingTime.minus(nonSpamPeriod))){
                 break;
             }
-            if (history[i].getUser().getNickName().equals(user.getNickName())) {
+            if(message.getUser().equals(user)){
                 counterOfMessages++;
-                if (counterOfMessages == limitNumOfMessages) {
-                    return false;
+                if (counterOfMessages==limitNumOfMessages){
+                    throw new UserMessagesRateLimitingExceededException(message.getSendTime().plus(nonSpamPeriod));
                 }
             }
         }
-        addMessage(new Message(text, user, sendingTime));
-        return true;
+
+        history.add(new Message(text, user, sendingTime));
+
     }
 
-    public void addMessage(Message newMessage) {
-        history = Arrays.copyOf(history, history.length + 1);
-        history[history.length - 1] = newMessage;
+
+    public List<Message> getAll() {
+        history = Collections.unmodifiableList(history);
+        return history;
     }
 
-    public Message[] getAll() {
-        return Arrays.copyOf(history, history.length);
-    }
-
-    public Instant getSendingTime() {
+    private Instant getSendingTime() {
         return Instant.now();
     }
 }

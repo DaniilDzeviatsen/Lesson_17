@@ -1,7 +1,9 @@
 package by.teachmeskills.dzeviatsen.homework17;
 
 import java.time.Duration;
-import java.util.Arrays;
+import java.time.Instant;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class HomeWork17 {
@@ -12,39 +14,38 @@ public class HomeWork17 {
         System.out.println("Enter limit num of messages");
         int limitNumOfMessages = Integer.parseInt(sc.nextLine());
         System.out.println("Enter freezing period");
-        Duration period = Duration.ofSeconds(Integer.parseInt(sc.nextLine()));
-        do {
-            System.out.println("Enter operation number:");
-            System.out.println("1-enter chat");
-            System.out.println("2-show chat history");
-            int taskNum = Integer.parseInt(sc.nextLine());
-            switch (taskNum) {
-                case 1 -> {
-                    telegramPro = new ChatService(limitNumOfMessages, period);
-                    int count = 0;
-                    do {
-                        System.out.println("If you want to quit enter STOP, if no press ENTER");
-                        if (sc.nextLine().equalsIgnoreCase("STOP")) {
-                            System.out.println("Goodbye");
-                            break;
-                        }
-                        System.out.println("Enter username");
-                        User user = new User(sc.nextLine());
-                        System.out.println("Enter text");
-                        String text = sc.nextLine();
-                        if (telegramPro.ifAddNewMessage(text, user)) {
-                            System.out.println("Message sent");
-                        } else {
-                            System.out.println("Do not spam, please");
-                        }
+        Duration nonSpamPeriod = Duration.ofSeconds(Integer.parseInt(sc.nextLine()));
+        telegramPro = new ChatService(limitNumOfMessages, nonSpamPeriod);
+        while (true) {
+            System.out.println(">");
+            String command = sc.nextLine();
+            switch (command) {
+                default -> {
+
+                    String[] parts = command.split(":\\s*");
+                    if (parts.length != 2) throw new IllegalStateException("Неверный формат команды");
+
+                    User user = new User(parts[0]);
+                    String text = parts[1];
+
+                    try {
+                        telegramPro.ifAddNewMessage(text, user);
+                        System.out.println("Доставлено");
+                    } catch (UserMessagesRateLimitingExceededException e) {
+                        System.out.println("Слишком частые запросы, напишите через "
+                                + Duration.between(Instant.now(), e.getNonBlockedTime()).getSeconds() + " секунд");
                     }
-                    while (true);
 
                 }
-                case 2 -> {
-                    System.out.println(Arrays.toString(telegramPro.getAll()));
+                case "history" -> {
+                    System.out.println(telegramPro.getAll());
+
+                }
+                case "exit" -> {
+                    return;
+
                 }
             }
-        } while (true);
+        }
     }
 }
