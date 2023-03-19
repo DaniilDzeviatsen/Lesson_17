@@ -41,13 +41,6 @@ public class HomeWork17 {
                     System.out.println(telegramPro.getAll());
 
                 }
-                case "history2" -> {
-                    List<Message> history = telegramPro.getAll();
-                    ListIterator<Message> listIterator = history.listIterator(history.size());
-                    while (listIterator.hasPrevious()) {
-                        System.out.println(listIterator.previous().toString());
-                    }
-                }
                 case "exit" -> {
                     return;
 
